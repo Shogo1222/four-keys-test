@@ -36,9 +36,9 @@ jobs:
           ' |
           jq -r '.data.node | .mergedAt, .commits.nodes[0].commit.authoredDate | fromdate | strftime("%s")' |
           xargs -n 2 |
-          awk '{printf "%d", ($1 - $2) / 60 / 60 }'|
+          awk '{printf "%d", ($1 - $2) / 60 }'|
           xargs -I{} echo LEAD_TIME_HOUR={} >> $GITHUB_ENV
       - name: comment
         run: |
           gh pr comment ${{ github.event.pull_request.html_url }} \
-          -b "@${{ github.event.pull_request.user.login }} $(expr ${LEAD_TIME_HOUR} / 24)日 (${LEAD_TIME_HOUR}時間)"
+          -b "@${{ github.event.pull_request.user.login }} $(expr ${LEAD_TIME_HOUR} / 24)日 (${LEAD_TIME_HOUR / 60}時間 ${LEAD_TIME_HOUR}分)"
